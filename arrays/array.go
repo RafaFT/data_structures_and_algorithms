@@ -1,0 +1,86 @@
+package arrays
+
+import (
+	"fmt"
+)
+
+type Array[T any] struct {
+	arr []T
+}
+
+func Read[T any](a Array[T], index int) T {
+	if index < 0 || index >= len(a.arr) {
+		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(a.arr)))
+	}
+
+	return a.arr[index]
+}
+
+func Search[T comparable](a Array[T], value T) int {
+	for i, v := range a.arr {
+		if v == value {
+			return i
+		}
+	}
+
+	return -1
+}
+
+func SearchFunc[T any](a Array[T], value T, cmp func(v1, v2 T) bool) int {
+	for i, v := range a.arr {
+		if cmp(v, value) {
+			return i
+		}
+	}
+
+	return -1
+}
+
+func Insert[T any](a Array[T], value T, index int) Array[T] {
+	if index < 0 || index > len(a.arr) {
+		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(a.arr)))
+	}
+
+	a.arr = append(a.arr, value)
+
+	// swap values until new value is at correct index position
+	for newIndex := len(a.arr) - 1; newIndex != index; newIndex-- {
+		a.arr[newIndex], a.arr[newIndex-1] = a.arr[newIndex-1], a.arr[newIndex]
+	}
+
+	return a
+}
+
+func Delete[T comparable](a Array[T], value T) (Array[T], int) {
+	index := Search(a, value)
+
+	if index == -1 {
+		return a, -1
+	}
+
+	// swap values to the right until last index can be removed
+	for newIndex := index; newIndex < len(a.arr)-1; newIndex++ {
+		a.arr[newIndex], a.arr[newIndex+1] = a.arr[newIndex+1], a.arr[newIndex]
+	}
+
+	a.arr = a.arr[:len(a.arr)-1]
+
+	return a, index
+}
+
+func DeleteFunc[T any](a Array[T], value T, cmp func(v1, v2 T) bool) (Array[T], int) {
+	index := SearchFunc(a, value, cmp)
+
+	if index == -1 {
+		return a, -1
+	}
+
+	// swap values to the right until last index can be removed
+	for newIndex := index; newIndex < len(a.arr)-1; newIndex++ {
+		a.arr[newIndex], a.arr[newIndex+1] = a.arr[newIndex+1], a.arr[newIndex]
+	}
+
+	a.arr = a.arr[:len(a.arr)-1]
+
+	return a, index
+}
