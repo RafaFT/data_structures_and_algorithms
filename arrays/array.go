@@ -26,9 +26,9 @@ func Search[T comparable](a Array[T], value T) int {
 	return -1
 }
 
-func SearchFunc[T any](a Array[T], value T, cmp func(v1, v2 T) bool) int {
+func SearchFunc[T any](a Array[T], value T, eq func(v1, v2 T) bool) int {
 	for i, v := range a.arr {
-		if cmp(v, value) {
+		if eq(v, value) {
 			return i
 		}
 	}
@@ -68,8 +68,8 @@ func Delete[T comparable](a Array[T], value T) (Array[T], int) {
 	return a, index
 }
 
-func DeleteFunc[T any](a Array[T], value T, cmp func(v1, v2 T) bool) (Array[T], int) {
-	index := SearchFunc(a, value, cmp)
+func DeleteFunc[T any](a Array[T], value T, eq func(v1, v2 T) bool) (Array[T], int) {
+	index := SearchFunc(a, value, eq)
 
 	if index == -1 {
 		return a, -1

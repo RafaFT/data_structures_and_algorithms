@@ -154,13 +154,13 @@ func TestSearchFunc(t *testing.T) {
 		},
 	}
 
-	cmp := func(s1, s2 string) bool {
+	eq := func(s1, s2 string) bool {
 		return strings.EqualFold(s1, s2)
 	}
 
 	for i, test := range tests {
 
-		if got := SearchFunc(test.array, test.value, cmp); got != test.want {
+		if got := SearchFunc(test.array, test.value, eq); got != test.want {
 			t.Errorf("%d: Search(%v, %q) = %d, want %d", i, test.array.arr, test.value, got, test.want)
 		}
 	}
@@ -341,14 +341,14 @@ func TestDeleteFunc(t *testing.T) {
 		},
 	}
 
-	cmp := func(v1, v2 int) bool {
+	eq := func(v1, v2 int) bool {
 		return math.Abs(float64(v1)) == math.Abs(float64(v2))
 	}
 
 	for i, test := range tests {
 		arrayBefore := fmt.Sprintf("%v", test.array.arr)
 
-		gotArray, gotIndex := DeleteFunc(test.array, test.value, cmp)
+		gotArray, gotIndex := DeleteFunc(test.array, test.value, eq)
 
 		if gotIndex != test.want || !reflect.DeepEqual(gotArray.arr, test.wantArray.arr) {
 			t.Errorf("%d: Delete(%s, %d) = (%v, %d), want (%v, %d)",
