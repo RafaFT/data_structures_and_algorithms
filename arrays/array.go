@@ -8,6 +8,10 @@ type Array[T any] struct {
 	arr []T
 }
 
+func (a Array[T]) String() string {
+	return fmt.Sprintf("%v", a.arr)
+}
+
 func Read[T any](a Array[T], index int) T {
 	if index < 0 || index >= len(a.arr) {
 		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(a.arr)))
