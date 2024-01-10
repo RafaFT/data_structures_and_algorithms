@@ -25,24 +25,20 @@ func TestRead(t *testing.T) {
 		want  int
 	}{
 		{
-			Array[int]{
-				arr: []int{1, 2, 3, 4},
-			},
+			Array[int]{1, 2, 3, 4},
 			0,
 			1,
 		},
 		{
-			Array[int]{
-				arr: []int{1, 2, 3, 4},
-			},
+			Array[int]{1, 2, 3, 4},
 			3,
 			4,
 		},
 	}
 
 	for i, test := range tests {
-		if got := Read(test.array, test.index); got != test.want {
-			t.Errorf("%d: Read(%s, %d) = %d, want %d", i, test.array, test.index, got, test.want)
+		if got := test.array.Read(test.index); got != test.want {
+			t.Errorf("%d: %v.Read(%d) = %d, want %d", i, test.array, test.index, got, test.want)
 		}
 	}
 }
@@ -60,21 +56,19 @@ func TestReadError(t *testing.T) {
 		},
 		{
 			"negative index",
-			Array[int]{arr: []int{1}},
+			Array[int]{1},
 			-1,
 		},
 		{
 			"index higher than length",
-			Array[int]{
-				arr: []int{1, 2, 3, 4},
-			},
+			Array[int]{1, 2, 3, 4},
 			4,
 		},
 	}
 
 	for i, test := range tests {
-		if !panics(func() { Read(test.array, test.index) }) {
-			t.Errorf("%d: %s should panic: Read(%s, %d)", i, test.name, test.array, test.index)
+		if !panics(func() { test.array.Read(test.index) }) {
+			t.Errorf("%d: %s should panic: %v.Read(%d)", i, test.name, test.array, test.index)
 		}
 	}
 }
@@ -86,35 +80,35 @@ func TestSearch(t *testing.T) {
 		want  int
 	}{
 		{
-			Array[string]{arr: []string{}},
+			Array[string]{},
 			"a",
 			-1,
 		},
 		{
-			Array[string]{arr: []string{"c"}},
+			Array[string]{"c"},
 			"b",
 			-1,
 		},
 		{
-			Array[string]{arr: []string{"a"}},
+			Array[string]{"a"},
 			"a",
 			0,
 		},
 		{
-			Array[string]{arr: []string{"a", "b", "c", "c"}},
+			Array[string]{"a", "b", "c", "c"},
 			"c",
 			2,
 		},
 		{
-			Array[string]{arr: []string{"a", "b", "c", "d"}},
+			Array[string]{"a", "b", "c", "d"},
 			"d",
 			3,
 		},
 	}
 
 	for i, test := range tests {
-		if got := Search(test.array, test.value); got != test.want {
-			t.Errorf("%d: Search(%s, %q) = %d, want %d", i, test.array, test.value, got, test.want)
+		if got := test.array.Search(test.value); got != test.want {
+			t.Errorf("%d: %v.Search(%q) = %d, want %d", i, test.array, test.value, got, test.want)
 		}
 	}
 }
@@ -127,36 +121,38 @@ func TestInsert(t *testing.T) {
 		want  Array[string]
 	}{
 		{
-			Array[string]{arr: []string{}},
+			Array[string]{},
 			"a",
 			0,
-			Array[string]{arr: []string{"a"}},
+			Array[string]{"a"},
 		},
 		{
-			Array[string]{arr: []string{"a"}},
+			Array[string]{"a"},
 			"b",
 			1,
-			Array[string]{arr: []string{"a", "b"}},
+			Array[string]{"a", "b"},
 		},
 		{
-			Array[string]{arr: []string{"b"}},
+			Array[string]{"b"},
 			"a",
 			0,
-			Array[string]{arr: []string{"a", "b"}},
+			Array[string]{"a", "b"},
 		},
 		{
-			Array[string]{arr: []string{"a", "c"}},
+			Array[string]{"a", "c"},
 			"b",
 			1,
-			Array[string]{arr: []string{"a", "b", "c"}},
+			Array[string]{"a", "b", "c"},
 		},
 	}
 
 	for i, test := range tests {
 		arrayBefore := fmt.Sprint(test.array)
 
-		if got := Insert(test.array, test.value, test.index); !reflect.DeepEqual(got, test.want) {
-			t.Errorf("%d: Insert(%s, %q, %d) = %s, want %s", i, arrayBefore, test.value, test.index, test.array, test.want)
+		test.array.Insert(test.value, test.index)
+
+		if !reflect.DeepEqual(test.array, test.want) {
+			t.Errorf("%d: %s.Insert(%q, %d) = %s, want %s", i, arrayBefore, test.value, test.index, test.array, test.want)
 		}
 	}
 }
@@ -170,13 +166,13 @@ func TestInsertError(t *testing.T) {
 	}{
 		{
 			"negative index",
-			Array[string]{arr: []string{"a"}},
+			Array[string]{"a"},
 			"b",
 			-1,
 		},
 		{
 			"index higher than length",
-			Array[string]{arr: []string{"a"}},
+			Array[string]{"a"},
 			"b",
 			2,
 		},
@@ -185,7 +181,7 @@ func TestInsertError(t *testing.T) {
 	for i, test := range tests {
 		arrayBefore := fmt.Sprint(test.array)
 
-		if !panics(func() { Insert(test.array, test.value, test.index) }) {
+		if !panics(func() { test.array.Insert(test.value, test.index) }) {
 			t.Errorf("%d: %s should panic: %s.Insert(%q, %d)", i, test.name, arrayBefore, test.value, test.index)
 		}
 	}
@@ -199,39 +195,39 @@ func TestDelete(t *testing.T) {
 		want      int
 	}{
 		{
-			Array[int]{arr: []int{}},
+			Array[int]{},
 			1,
-			Array[int]{arr: []int{}},
+			Array[int]{},
 			-1,
 		},
 		{
-			Array[int]{arr: []int{1}},
+			Array[int]{1},
 			2,
-			Array[int]{arr: []int{1}},
+			Array[int]{1},
 			-1,
 		},
 		{
-			Array[int]{arr: []int{1}},
+			Array[int]{1},
 			1,
-			Array[int]{arr: []int{}},
+			Array[int]{},
 			0,
 		},
 		{
-			Array[int]{arr: []int{1, 2}},
+			Array[int]{1, 2},
 			1,
-			Array[int]{arr: []int{2}},
+			Array[int]{2},
 			0,
 		},
 		{
-			Array[int]{arr: []int{1, 2}},
+			Array[int]{1, 2},
 			2,
-			Array[int]{arr: []int{1}},
+			Array[int]{1},
 			1,
 		},
 		{
-			Array[int]{arr: []int{0, 1, 2, 1}},
+			Array[int]{0, 1, 2, 1},
 			1,
-			Array[int]{arr: []int{0, 2, 1}},
+			Array[int]{0, 2, 1},
 			1,
 		},
 	}
@@ -239,10 +235,10 @@ func TestDelete(t *testing.T) {
 	for i, test := range tests {
 		arrayBefore := fmt.Sprint(test.array)
 
-		gotArray, gotIndex := Delete(test.array, test.value)
+		gotIndex := test.array.Delete(test.value)
 
-		if gotIndex != test.want || !reflect.DeepEqual(gotArray.arr, test.wantArray.arr) {
-			t.Errorf("%d: Delete(%s, %d) = (%s, %d), want (%s, %d)",
+		if gotIndex != test.want || !reflect.DeepEqual(test.array, test.wantArray) {
+			t.Errorf("%d: %s.Delete(%d) = (%v, %d), want (%v, %d)",
 				i, arrayBefore, test.value, test.array, gotIndex, test.wantArray, test.want,
 			)
 		}

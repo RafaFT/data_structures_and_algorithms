@@ -4,24 +4,19 @@ import (
 	"fmt"
 )
 
-type Array[T comparable] struct {
-	arr []T
-}
+type Array[T comparable] []T
 
-func (a Array[T]) String() string {
-	return fmt.Sprintf("%v", a.arr)
-}
-
-func Read[T comparable](a Array[T], index int) T {
-	if index < 0 || index >= len(a.arr) {
-		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(a.arr)))
+func (a *Array[T]) Read(index int) T {
+	arr := *a
+	if index < 0 || index >= len(arr) {
+		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(arr)))
 	}
 
-	return a.arr[index]
+	return arr[index]
 }
 
-func Search[T comparable](a Array[T], value T) int {
-	for i, v := range a.arr {
+func (a *Array[T]) Search(value T) int {
+	for i, v := range *a {
 		if v == value {
 			return i
 		}
@@ -30,34 +25,37 @@ func Search[T comparable](a Array[T], value T) int {
 	return -1
 }
 
-func Insert[T comparable](a Array[T], value T, index int) Array[T] {
-	if index < 0 || index > len(a.arr) {
-		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(a.arr)))
+func (a *Array[T]) Insert(value T, index int) {
+	arr := *a
+	if index < 0 || index > len(arr) {
+		panic(fmt.Sprintf("index out of range [%d] with length %d", index, len(arr)))
 	}
 
-	a.arr = append(a.arr, value)
+	arr = append(arr, value)
 
 	// swap values until new value is at correct index position
-	for newIndex := len(a.arr) - 1; newIndex != index; newIndex-- {
-		a.arr[newIndex], a.arr[newIndex-1] = a.arr[newIndex-1], a.arr[newIndex]
+	for newIndex := len(arr) - 1; newIndex != index; newIndex-- {
+		arr[newIndex], arr[newIndex-1] = arr[newIndex-1], arr[newIndex]
 	}
 
-	return a
+	*a = arr
 }
 
-func Delete[T comparable](a Array[T], value T) (Array[T], int) {
-	index := Search(a, value)
+func (a *Array[T]) Delete(value T) int {
+	arr := *a
+
+	index := arr.Search(value)
 
 	if index == -1 {
-		return a, -1
+		return -1
 	}
 
 	// swap values to the right until last index can be removed
-	for newIndex := index; newIndex < len(a.arr)-1; newIndex++ {
-		a.arr[newIndex], a.arr[newIndex+1] = a.arr[newIndex+1], a.arr[newIndex]
+	for newIndex := index; newIndex < len(arr)-1; newIndex++ {
+		arr[newIndex], arr[newIndex+1] = arr[newIndex+1], arr[newIndex]
 	}
 
-	a.arr = a.arr[:len(a.arr)-1]
+	*a = arr[:len(arr)-1]
 
-	return a, index
+	return index
 }
