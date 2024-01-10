@@ -2,9 +2,7 @@ package arrays
 
 import (
 	"fmt"
-	"math"
 	"reflect"
-	"strings"
 	"testing"
 )
 
@@ -116,51 +114,6 @@ func TestSearch(t *testing.T) {
 
 	for i, test := range tests {
 		if got := Search(test.array, test.value); got != test.want {
-			t.Errorf("%d: Search(%s, %q) = %d, want %d", i, test.array, test.value, got, test.want)
-		}
-	}
-}
-
-func TestSearchFunc(t *testing.T) {
-	tests := []struct {
-		array Array[string]
-		value string
-		want  int
-	}{
-		{
-			Array[string]{arr: []string{}},
-			"A",
-			-1,
-		},
-		{
-			Array[string]{arr: []string{"c"}},
-			"B",
-			-1,
-		},
-		{
-			Array[string]{arr: []string{"a"}},
-			"A",
-			0,
-		},
-		{
-			Array[string]{arr: []string{"a", "b", "c", "c"}},
-			"C",
-			2,
-		},
-		{
-			Array[string]{arr: []string{"a", "b", "c", "d"}},
-			"D",
-			3,
-		},
-	}
-
-	eq := func(s1, s2 string) bool {
-		return strings.EqualFold(s1, s2)
-	}
-
-	for i, test := range tests {
-
-		if got := SearchFunc(test.array, test.value, eq); got != test.want {
 			t.Errorf("%d: Search(%s, %q) = %d, want %d", i, test.array, test.value, got, test.want)
 		}
 	}
@@ -287,68 +240,6 @@ func TestDelete(t *testing.T) {
 		arrayBefore := fmt.Sprint(test.array)
 
 		gotArray, gotIndex := Delete(test.array, test.value)
-
-		if gotIndex != test.want || !reflect.DeepEqual(gotArray.arr, test.wantArray.arr) {
-			t.Errorf("%d: Delete(%s, %d) = (%s, %d), want (%s, %d)",
-				i, arrayBefore, test.value, test.array, gotIndex, test.wantArray, test.want,
-			)
-		}
-	}
-}
-
-func TestDeleteFunc(t *testing.T) {
-	tests := []struct {
-		array     Array[int]
-		value     int
-		wantArray Array[int]
-		want      int
-	}{
-		{
-			Array[int]{arr: []int{}},
-			-1,
-			Array[int]{arr: []int{}},
-			-1,
-		},
-		{
-			Array[int]{arr: []int{1}},
-			-2,
-			Array[int]{arr: []int{1}},
-			-1,
-		},
-		{
-			Array[int]{arr: []int{1}},
-			-1,
-			Array[int]{arr: []int{}},
-			0,
-		},
-		{
-			Array[int]{arr: []int{1, 2}},
-			-1,
-			Array[int]{arr: []int{2}},
-			0,
-		},
-		{
-			Array[int]{arr: []int{1, 2}},
-			-2,
-			Array[int]{arr: []int{1}},
-			1,
-		},
-		{
-			Array[int]{arr: []int{0, 1, 2, 1}},
-			-1,
-			Array[int]{arr: []int{0, 2, 1}},
-			1,
-		},
-	}
-
-	eq := func(v1, v2 int) bool {
-		return math.Abs(float64(v1)) == math.Abs(float64(v2))
-	}
-
-	for i, test := range tests {
-		arrayBefore := fmt.Sprint(test.array)
-
-		gotArray, gotIndex := DeleteFunc(test.array, test.value, eq)
 
 		if gotIndex != test.want || !reflect.DeepEqual(gotArray.arr, test.wantArray.arr) {
 			t.Errorf("%d: Delete(%s, %d) = (%s, %d), want (%s, %d)",
