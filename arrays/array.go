@@ -1,11 +1,25 @@
+// Package arrays contains all array's implementations, which are defined as
+// concrete data structures that stores elements sequentially in memory.
+//
+// Since it's not possible to implement an array from scratch in Go, all current
+// implementations use slices under the hood and define all necessary behavior through
+// functions/methods.
+//
+// Most if not all functionalities defined here are also implemented by the new "slices"
+// package, which makes this package and it's types mostly useless.
 package arrays
 
 import (
 	"fmt"
 )
 
+// Array is a simple mutable array implementation.
 type Array[T comparable] []T
 
+// Read returns the value at the provided index.
+// It panics if index < 0 or index >= len(a).
+//
+// Time O(1) and space O(1).
 func (a *Array[T]) Read(index int) T {
 	arr := *a
 	if index < 0 || index >= len(arr) {
@@ -15,6 +29,9 @@ func (a *Array[T]) Read(index int) T {
 	return arr[index]
 }
 
+// Search returns the first index that contains value or -1.
+//
+// Time O(n) and space O(1).
 func (a *Array[T]) Search(value T) int {
 	for i, v := range *a {
 		if v == value {
@@ -25,6 +42,10 @@ func (a *Array[T]) Search(value T) int {
 	return -1
 }
 
+// Insert inserts value at the provided index.
+// It panics if index < 0 or index > len(a)
+//
+// Time O(n) and space O(1).
 func (a *Array[T]) Insert(value T, index int) {
 	arr := *a
 	if index < 0 || index > len(arr) {
@@ -41,6 +62,9 @@ func (a *Array[T]) Insert(value T, index int) {
 	*a = arr
 }
 
+// Delete removes the first occurrence of value and return it's index or returns -1.
+//
+// Time O(n) and space O(1).
 func (a *Array[T]) Delete(value T) int {
 	arr := *a
 
