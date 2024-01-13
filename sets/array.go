@@ -2,17 +2,18 @@ package sets
 
 import "fmt"
 
-var _ Set[int] = &arraySet[int]{}
+var _ Set[int] = &ArraySet[int]{}
 
-type arraySet[T comparable] struct {
+// ArraySet is a naive [Set] implementation that uses an array underneath.
+type ArraySet[T comparable] struct {
 	arr []T
 }
 
-func (s *arraySet[T]) String() string {
+func (s *ArraySet[T]) String() string {
 	return fmt.Sprintf("%v", s.arr)
 }
 
-func (s *arraySet[T]) indexOf(value T) int {
+func (s *ArraySet[T]) indexOf(value T) int {
 	for i, v := range s.arr {
 		if v == value {
 			return i
@@ -22,11 +23,17 @@ func (s *arraySet[T]) indexOf(value T) int {
 	return -1
 }
 
-func (s *arraySet[T]) Has(value T) bool {
+// Has reports whether value happens in ArraySet.
+//
+// Time O(n) and space O(1).
+func (s *ArraySet[T]) Has(value T) bool {
 	return s.indexOf(value) != -1
 }
 
-func (s *arraySet[T]) Add(value T) bool {
+// Add adds value to ArraySet and reports whether it succeed.
+//
+// Time O(n) and space O(1).
+func (s *ArraySet[T]) Add(value T) bool {
 	if s.Has(value) {
 		return false
 	}
@@ -36,7 +43,10 @@ func (s *arraySet[T]) Add(value T) bool {
 	return true
 }
 
-func (s *arraySet[T]) Remove(value T) bool {
+// Remove removes value from ArraySet and reports whether it was found.
+//
+// Time O(n) and space O(1).
+func (s *ArraySet[T]) Remove(value T) bool {
 	index := s.indexOf(value)
 
 	if index == -1 {

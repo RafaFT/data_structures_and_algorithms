@@ -8,22 +8,22 @@ import (
 
 func TestArraySetHas(t *testing.T) {
 	tests := []struct {
-		set   *arraySet[string]
+		set   *ArraySet[string]
 		value string
 		want  bool
 	}{
 		{
-			&arraySet[string]{arr: []string{}},
+			&ArraySet[string]{arr: []string{}},
 			"a",
 			false,
 		},
 		{
-			&arraySet[string]{arr: []string{"a"}},
+			&ArraySet[string]{arr: []string{"a"}},
 			"a",
 			true,
 		},
 		{
-			&arraySet[string]{arr: []string{"a", "b", "c"}},
+			&ArraySet[string]{arr: []string{"a", "b", "c"}},
 			"c",
 			true,
 		},
@@ -38,28 +38,28 @@ func TestArraySetHas(t *testing.T) {
 
 func TestArraySetAdd(t *testing.T) {
 	tests := []struct {
-		set      *arraySet[string]
+		set      *ArraySet[string]
 		value    string
 		wantBool bool
-		wantSet  *arraySet[string]
+		wantSet  *ArraySet[string]
 	}{
 		{
-			&arraySet[string]{arr: []string{}},
+			&ArraySet[string]{arr: []string{}},
 			"a",
 			true,
-			&arraySet[string]{arr: []string{"a"}},
+			&ArraySet[string]{arr: []string{"a"}},
 		},
 		{
-			&arraySet[string]{arr: []string{"a"}},
+			&ArraySet[string]{arr: []string{"a"}},
 			"b",
 			true,
-			&arraySet[string]{arr: []string{"a", "b"}},
+			&ArraySet[string]{arr: []string{"a", "b"}},
 		},
 		{
-			&arraySet[string]{arr: []string{"a", "b"}},
+			&ArraySet[string]{arr: []string{"a", "b"}},
 			"a",
 			false,
-			&arraySet[string]{arr: []string{"a", "b"}},
+			&ArraySet[string]{arr: []string{"a", "b"}},
 		},
 	}
 
@@ -75,28 +75,28 @@ func TestArraySetAdd(t *testing.T) {
 
 func TestArraySetRemove(t *testing.T) {
 	tests := []struct {
-		set      *arraySet[string]
+		set      *ArraySet[string]
 		value    string
 		wantBool bool
-		wantSet  *arraySet[string]
+		wantSet  *ArraySet[string]
 	}{
 		{
-			&arraySet[string]{arr: []string{}},
+			&ArraySet[string]{arr: []string{}},
 			"a",
 			false,
-			&arraySet[string]{arr: []string{}},
+			&ArraySet[string]{arr: []string{}},
 		},
 		{
-			&arraySet[string]{arr: []string{"a"}},
+			&ArraySet[string]{arr: []string{"a"}},
 			"b",
 			false,
-			&arraySet[string]{arr: []string{"a",}},
+			&ArraySet[string]{arr: []string{"a"}},
 		},
 		{
-			&arraySet[string]{arr: []string{"a", "b"}},
+			&ArraySet[string]{arr: []string{"a", "b"}},
 			"a",
 			true,
-			&arraySet[string]{arr: []string{"b"}},
+			&ArraySet[string]{arr: []string{"b"}},
 		},
 	}
 
