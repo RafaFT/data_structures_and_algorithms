@@ -165,6 +165,12 @@ func TestInsertError(t *testing.T) {
 		index int
 	}{
 		{
+			"index > 0 on empty array",
+			Array[string]{},
+			"a",
+			1,
+		},
+		{
 			"negative index",
 			Array[string]{"a"},
 			"b",
