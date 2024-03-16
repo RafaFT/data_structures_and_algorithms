@@ -64,11 +64,11 @@ func TestArraySetAdd(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		setBefore := fmt.Sprint(test.set)
+		setBefore := fmt.Sprintf("%v", test.set.arr)
 
 		if gotBool := test.set.Add(test.value); gotBool != test.wantBool || !reflect.DeepEqual(test.set, test.wantSet) {
 			t.Errorf("%d: %v.Add(%q) = (%v, %v), want %v, %v",
-				i, setBefore, test.value, test.set, gotBool, test.wantSet, test.wantBool)
+				i, setBefore, test.value, test.set.arr, gotBool, test.wantSet.arr, test.wantBool)
 		}
 	}
 }
@@ -101,11 +101,11 @@ func TestArraySetRemove(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		setBefore := fmt.Sprint(test.set)
+		setBefore := fmt.Sprintf("%v", test.set.arr)
 
 		if gotBool := test.set.Remove(test.value); gotBool != test.wantBool || !reflect.DeepEqual(test.set, test.wantSet) {
 			t.Errorf("%d: %v.Remove(%q) = (%v, %v), want %v, %v",
-				i, setBefore, test.value, test.set, gotBool, test.wantSet, test.wantBool)
+				i, setBefore, test.value, test.set.arr, gotBool, test.wantSet.arr, test.wantBool)
 		}
 	}
 }

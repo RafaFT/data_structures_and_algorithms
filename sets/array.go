@@ -1,16 +1,10 @@
 package sets
 
-import "fmt"
-
 var _ Set[int] = &ArraySet[int]{}
 
 // ArraySet is a naive [Set] implementation that uses an array underneath.
 type ArraySet[T comparable] struct {
 	arr []T
-}
-
-func (s *ArraySet[T]) String() string {
-	return fmt.Sprintf("%v", s.arr)
 }
 
 func (s *ArraySet[T]) indexOf(value T) int {

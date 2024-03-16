@@ -3,7 +3,8 @@
 package sets
 
 // Set is the interface for set implementations.
-// A Set is an abstract data structure that prevents duplicate values.
+// A Set is an abstract data structure that prevents duplicate values
+// and does not guarantee any order.
 type Set[T comparable] interface {
 	// Add attempts to insert value to Set and reports whether it succeed.
 	Add(value T) bool
