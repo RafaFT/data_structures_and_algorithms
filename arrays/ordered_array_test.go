@@ -196,3 +196,23 @@ func TestOrderedDelete(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkOrderedSearch(b *testing.B) {
+	oa := OrderedArray[int]{
+		arr: make([]int, 100000),
+	}
+
+	for range b.N {
+		oa.Search(1)
+	}
+}
+
+func BenchmarkOrderedDelete(b *testing.B) {
+	oa := OrderedArray[int]{
+		arr: make([]int, 100000),
+	}
+
+	for range b.N {
+		oa.Delete(0)
+	}
+}

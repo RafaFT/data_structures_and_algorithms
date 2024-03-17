@@ -250,3 +250,19 @@ func TestDelete(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkSearch(b *testing.B) {
+	var a Array[int] = make([]int, 100000)
+
+	for range b.N {
+		a.Search(1)
+	}
+}
+
+func BenchmarkDelete(b *testing.B) {
+	var a Array[int] = make([]int, 100000)
+
+	for range b.N {
+		a.Delete(0)
+	}
+}
