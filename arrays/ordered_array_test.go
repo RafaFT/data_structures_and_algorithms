@@ -93,9 +93,14 @@ func TestOrderedSearch(t *testing.T) {
 			3,
 		},
 		{
+			OrderedArray[string]{arr: []string{"a", "b", "c", "d"}},
+			"e",
+			-1,
+		},
+		{
 			OrderedArray[string]{arr: []string{"a", "a", "a", "a"}},
 			"a",
-			1,
+			0,
 		},
 	}
 

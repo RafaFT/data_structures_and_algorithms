@@ -25,13 +25,17 @@ func (a *OrderedArray[T]) Read(index int) T {
 	return a.arr[index]
 }
 
-// Search returns an index that contains value or -1.
-// If found, index is not guarantee to be the first
-// occurrence of v.
+// Search returns the first index that contains value or -1.
 //
 // Time O(log(n)) and space O(1).
 func (a *OrderedArray[T]) Search(value T) int {
-	return bisect.Search(a.arr, value)
+	i := bisect.BisectLeft(a.arr, value)
+
+	if i == len(a.arr) || i == 0 && a.arr[i] != value {
+		return -1
+	}
+
+	return i
 }
 
 // Insert inserts value at correct index to preserve order.
