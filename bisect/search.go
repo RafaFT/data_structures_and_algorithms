@@ -34,3 +34,24 @@ func Search[T cmp.Ordered](s []T, v T) int {
 
 	return -1
 }
+
+// BisectLeft returns the lowest index of s where v should be placed to keep order.
+// Index might equal len(s).
+//
+// s MUST be sorted in ascending order.
+//
+// Time O(log(n)) and space O(1).
+func BisectLeft[T cmp.Ordered](s []T, value T) int {
+	left, right := 0, len(s)-1
+
+	for left <= right {
+		m := ((right - left) / 2) + left
+		if v := s[m]; v >= value {
+			right = m - 1
+		} else {
+			left = m + 1
+		}
+	}
+
+	return left
+}
