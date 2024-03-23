@@ -62,12 +62,9 @@ func (a *OrderedArray[T]) Insert(value T) {
 //
 // Time O(n) and space O(1).
 func (a *OrderedArray[T]) Delete(value T) int {
-	if len(a.arr) == 0 {
-		return -1
-	}
+	i := bisect.BisectRight(a.arr, value) - 1
 
-	i := bisect.Search(a.arr, value)
-	if i == -1 {
+	if i == -1 || (a.arr[i] != value) {
 		return -1
 	}
 
