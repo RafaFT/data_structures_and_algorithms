@@ -185,7 +185,7 @@ func TestOrderedDelete(t *testing.T) {
 			OrderedArray[int]{arr: []int{1, 1, 2, 2}},
 			2,
 			OrderedArray[int]{arr: []int{1, 1, 2}},
-			2,
+			3,
 		},
 	}
 
@@ -209,6 +209,16 @@ func BenchmarkOrderedSearch(b *testing.B) {
 
 	for range b.N {
 		oa.Search(1)
+	}
+}
+
+func BenchmarkOrderedInsert(b *testing.B) {
+	oa := OrderedArray[int]{
+		arr: make([]int, 0, 100000),
+	}
+
+	for range b.N {
+		oa.Insert(0)
 	}
 }
 

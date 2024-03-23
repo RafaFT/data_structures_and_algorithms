@@ -259,6 +259,14 @@ func BenchmarkSearch(b *testing.B) {
 	}
 }
 
+func BenchmarkInsert(b *testing.B) {
+	var a Array[int] = make([]int, 1, 100000)
+
+	for range b.N {
+		a.Insert(0, len(a)-1)
+	}
+}
+
 func BenchmarkDelete(b *testing.B) {
 	var a Array[int] = make([]int, 100000)
 
