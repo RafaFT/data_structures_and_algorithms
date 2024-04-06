@@ -42,7 +42,7 @@ func (a *OrderedArray[T]) Search(value T) int {
 //
 // Time O(n) and space O(1).
 func (a *OrderedArray[T]) Insert(value T) {
-	i := bisect.RightSearch(a.arr, value)
+	i := bisect.BisectRight(a.arr, value)
 
 	a.arr = append(a.arr, value)
 
