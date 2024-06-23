@@ -2,9 +2,35 @@ package arrays
 
 import (
 	"fmt"
+	"iter"
 	"reflect"
 	"testing"
 )
+
+type collected2[T1, T2 any] struct {
+	v1 T1
+	v2 T2
+}
+
+func collect[T any](seq iter.Seq[T]) []T {
+	var s []T
+
+	for v := range seq {
+		s = append(s, v)
+	}
+
+	return s
+}
+
+func collect2[T1, T2 any](seq iter.Seq2[T1, T2]) []collected2[T1, T2] {
+	var s []collected2[T1, T2]
+
+	for v1, v2 := range seq {
+		s = append(s, collected2[T1, T2]{v1, v2})
+	}
+
+	return s
+}
 
 func TestOrderedRead(t *testing.T) {
 	tests := []struct {
@@ -229,5 +255,144 @@ func BenchmarkOrderedDelete(b *testing.B) {
 
 	for range b.N {
 		oa.Delete(0)
+	}
+}
+
+func TestOrderedArrayAll(t *testing.T) {
+	oa := OrderedArray[int]{
+		arr: []int{
+			1,
+			2,
+			3,
+		},
+	}
+
+	want := []collected2[int, int]{
+		collected2[int, int]{0, 1},
+		collected2[int, int]{1, 2},
+		collected2[int, int]{2, 3},
+	}
+
+	if got := collect2(oa.All()); !reflect.DeepEqual(got, want) {
+		t.Errorf("oa.All() = %v, want %v", got, want)
+	}
+}
+
+func TestOrderedArrayValues(t *testing.T) {
+	oa := OrderedArray[int]{
+		arr: []int{
+			1,
+			2,
+			3,
+		},
+	}
+
+	want := []int{
+		1,
+		2,
+		3,
+	}
+
+	if got := collect(oa.Values()); !reflect.DeepEqual(got, want) {
+		t.Errorf("oa.Values() = %v, want %v", got, want)
+	}
+}
+
+func TestOrderedArrayOccurrences(t *testing.T) {
+	tests := []struct {
+		oa   OrderedArray[int]
+		want []collected2[int, int]
+	}{
+		{
+			OrderedArray[int]{},
+			nil,
+		},
+		{
+			OrderedArray[int]{
+				arr: []int{
+					1,
+				},
+			},
+			[]collected2[int, int]{
+				collected2[int, int]{1, 1},
+			},
+		},
+		{
+			OrderedArray[int]{
+				arr: []int{
+					1,
+					1,
+					1,
+				},
+			},
+			[]collected2[int, int]{
+				collected2[int, int]{1, 3},
+			},
+		},
+		{
+			OrderedArray[int]{
+				arr: []int{
+					1,
+					2,
+					3,
+				},
+			},
+			[]collected2[int, int]{
+				collected2[int, int]{1, 1},
+				collected2[int, int]{2, 1},
+				collected2[int, int]{3, 1},
+			},
+		},
+		{
+			OrderedArray[int]{
+				arr: []int{
+					1,
+					2,
+					2,
+					3,
+				},
+			},
+			[]collected2[int, int]{
+				collected2[int, int]{1, 1},
+				collected2[int, int]{2, 2},
+				collected2[int, int]{3, 1},
+			},
+		},
+		{
+			OrderedArray[int]{
+				arr: []int{
+					1,
+					1,
+					2,
+					3,
+				},
+			},
+			[]collected2[int, int]{
+				collected2[int, int]{1, 2},
+				collected2[int, int]{2, 1},
+				collected2[int, int]{3, 1},
+			},
+		},
+		{
+			OrderedArray[int]{
+				arr: []int{
+					1,
+					2,
+					3,
+					3,
+				},
+			},
+			[]collected2[int, int]{
+				collected2[int, int]{1, 1},
+				collected2[int, int]{2, 1},
+				collected2[int, int]{3, 2},
+			},
+		},
+	}
+
+	for i, test := range tests {
+		if got := collect2(test.oa.Occurrences()); !reflect.DeepEqual(got, test.want) {
+			t.Errorf("%d: %v.Occurrences() = %v, want %v", i, test.oa.arr, got, test.want)
+		}
 	}
 }

@@ -3,6 +3,7 @@ package arrays
 import (
 	"cmp"
 	"fmt"
+	"iter"
 
 	"dsa/bisect"
 )
@@ -75,4 +76,52 @@ func (a *OrderedArray[T]) Delete(value T) int {
 	a.arr = a.arr[:len(a.arr)-1]
 
 	return i
+}
+
+// All returns an iterator over OrderedArray indexes and values.
+func (a *OrderedArray[T]) All() iter.Seq2[int, T] {
+	return func(yield func(index int, value T) bool) {
+		for i, v := range a.arr {
+			if !yield(i, v) {
+				break
+			}
+		}
+	}
+}
+
+// Values returns an iterator over OrderedArray values.
+func (a *OrderedArray[T]) Values() iter.Seq[T] {
+	return func(yield func(value T) bool) {
+		for _, v := range a.arr {
+			if !yield(v) {
+				break
+			}
+		}
+	}
+}
+
+// Occurrences returns an iterator over OrderedArray values and
+// the number of it's occurrences.
+func (a *OrderedArray[T]) Occurrences() iter.Seq2[T, int] {
+	return func(yield func(value T, count int) bool) {
+		if len(a.arr) == 0 {
+			return
+		}
+
+		count := 1
+		value := a.arr[0]
+		for i := 1; i < len(a.arr); i++ {
+			if a.arr[i] == value {
+				count++
+				continue
+			}
+			if !yield(value, count) {
+				return
+			}
+			count = 1
+			value = a.arr[i]
+		}
+
+		yield(value, count)
+	}
 }
