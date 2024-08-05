@@ -1,6 +1,7 @@
 package lists
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -16,7 +17,7 @@ func panics(fn func()) (panicked bool) {
 	return panicked
 }
 
-func equals[T comparable](l1, l2 LinkedList[T]) bool {
+func equals[T comparable](l1, l2 *LinkedList[T]) bool {
 	if l1.len != l2.len {
 		return false
 	}
@@ -39,38 +40,38 @@ func equals[T comparable](l1, l2 LinkedList[T]) bool {
 
 func TestOutOfBounds(t *testing.T) {
 	tests := []struct {
-		ll    LinkedList[string]
+		ll    *LinkedList[string]
 		index int
 	}{
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				len:  0,
 				head: nil,
 			},
 			-1,
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				len:  0,
 				head: nil,
 			},
 			0,
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				len: 1,
 				head: &node[string]{
-					value: "",
+					value: "a",
 					next:  nil,
 				},
 			},
 			1,
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				len: 1,
 				head: &node[string]{
-					value: "",
+					value: "a",
 					next:  nil,
 				},
 			},
@@ -81,7 +82,7 @@ func TestOutOfBounds(t *testing.T) {
 	t.Run("Read", func(t *testing.T) {
 		for i, test := range tests {
 			if panicked := panics(func() { test.ll.Read(test.index) }); !panicked {
-				t.Errorf("%d: LinkedList.Read(%d) expected to panic", i, test.index)
+				t.Errorf("%d: %v.Read(%d) expected to panic", i, test.ll, test.index)
 			}
 		}
 	})
@@ -94,7 +95,7 @@ func TestOutOfBounds(t *testing.T) {
 			}
 
 			if panicked := panics(func() { test.ll.Insert("", index) }); !panicked {
-				t.Errorf("%d: LinkedList.Insert(%d) expected to panicked", i, index)
+				t.Errorf("%d: %v.Insert(%d) expected to panic", i, test.ll, index)
 			}
 		}
 	})
@@ -102,14 +103,14 @@ func TestOutOfBounds(t *testing.T) {
 	t.Run("Delete", func(t *testing.T) {
 		for i, test := range tests {
 			if panicked := panics(func() { test.ll.Delete(test.index) }); !panicked {
-				t.Errorf("%d: LinkedList.Delete(%d) expected to panic", i, test.index)
+				t.Errorf("%d: %v.Delete(%d) expected to panic", i, test.ll, test.index)
 			}
 		}
 	})
 }
 
 func Test(t *testing.T) {
-	l := LinkedList[string]{
+	l := &LinkedList[string]{
 		head: &node[string]{
 			value: "a",
 			next: &node[string]{
@@ -144,7 +145,7 @@ func Test(t *testing.T) {
 
 		for i, test := range tests {
 			if got := l.Read(test.index); got != test.want {
-				t.Errorf("%d: LinkedList.Read(%d) = %s, got %s", i, test.index, test.want, got)
+				t.Errorf("%d: %v.Read(%d) = %s, got %s", i, l, test.index, test.want, got)
 			}
 		}
 	})
@@ -178,7 +179,7 @@ func Test(t *testing.T) {
 
 		for i, test := range tests {
 			if got := l.Search(test.value); got != test.want {
-				t.Errorf("%d: LinkedList.Search(%s) = %d, got %d", i, test.value, test.want, got)
+				t.Errorf("%d: %v.Search(%s) = %d, got %d", i, l, test.value, test.want, got)
 			}
 		}
 	})
@@ -186,19 +187,19 @@ func Test(t *testing.T) {
 
 func TestInsert(t *testing.T) {
 	tests := []struct {
-		ll    LinkedList[string]
+		ll    *LinkedList[string]
 		value string
 		index int
-		want  LinkedList[string]
+		want  *LinkedList[string]
 	}{
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				0,
 				nil,
 			},
 			"b",
 			0,
-			LinkedList[string]{
+			&LinkedList[string]{
 				1,
 				&node[string]{
 					value: "b",
@@ -207,7 +208,7 @@ func TestInsert(t *testing.T) {
 			},
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				1,
 				&node[string]{
 					value: "b",
@@ -216,7 +217,7 @@ func TestInsert(t *testing.T) {
 			},
 			"a",
 			0,
-			LinkedList[string]{
+			&LinkedList[string]{
 				2,
 				&node[string]{
 					value: "a",
@@ -228,7 +229,7 @@ func TestInsert(t *testing.T) {
 			},
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				2,
 				&node[string]{
 					value: "a",
@@ -240,7 +241,7 @@ func TestInsert(t *testing.T) {
 			},
 			"d",
 			2,
-			LinkedList[string]{
+			&LinkedList[string]{
 				3,
 				&node[string]{
 					value: "a",
@@ -255,7 +256,7 @@ func TestInsert(t *testing.T) {
 			},
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				3,
 				&node[string]{
 					value: "a",
@@ -270,7 +271,7 @@ func TestInsert(t *testing.T) {
 			},
 			"c",
 			2,
-			LinkedList[string]{
+			&LinkedList[string]{
 				4,
 				&node[string]{
 					value: "a",
@@ -290,22 +291,23 @@ func TestInsert(t *testing.T) {
 	}
 
 	for i, test := range tests {
+		before := fmt.Sprint(test.ll)
 		test.ll.Insert(test.value, test.index)
 
 		if !equals(test.ll, test.want) {
-			t.Errorf("%d: LinkedList.Insert(%s, %d)", i, test.value, test.index)
+			t.Errorf("%d: %v.Insert(%s, %d) = %s, got %s", i, before, test.value, test.index, test.want, test.ll)
 		}
 	}
 }
 
 func TestDelete(t *testing.T) {
 	tests := []struct {
-		ll    LinkedList[string]
+		ll    *LinkedList[string]
 		index int
-		want  LinkedList[string]
+		want  *LinkedList[string]
 	}{
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				1,
 				&node[string]{
 					value: "a",
@@ -313,13 +315,13 @@ func TestDelete(t *testing.T) {
 				},
 			},
 			0,
-			LinkedList[string]{
+			&LinkedList[string]{
 				0,
 				nil,
 			},
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				2,
 				&node[string]{
 					value: "a",
@@ -330,7 +332,7 @@ func TestDelete(t *testing.T) {
 				},
 			},
 			0,
-			LinkedList[string]{
+			&LinkedList[string]{
 				1,
 				&node[string]{
 					value: "b",
@@ -339,7 +341,7 @@ func TestDelete(t *testing.T) {
 			},
 		},
 		{
-			LinkedList[string]{
+			&LinkedList[string]{
 				2,
 				&node[string]{
 					value: "a",
@@ -350,7 +352,7 @@ func TestDelete(t *testing.T) {
 				},
 			},
 			1,
-			LinkedList[string]{
+			&LinkedList[string]{
 				1,
 				&node[string]{
 					value: "a",
@@ -361,10 +363,11 @@ func TestDelete(t *testing.T) {
 	}
 
 	for i, test := range tests {
+		before := fmt.Sprint(test.ll)
 		test.ll.Delete(test.index)
 
 		if !equals(test.ll, test.want) {
-			t.Errorf("%d: LinkedList.Delete(%d)", i, test.index)
+			t.Errorf("%d: %v.Delete(%d) = %v, got %v", i, before, test.index, test.want, test.ll)
 		}
 	}
 }

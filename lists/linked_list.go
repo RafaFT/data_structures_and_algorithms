@@ -1,6 +1,9 @@
 package lists
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type LinkedList[T comparable] struct {
 	len  int
@@ -100,4 +103,28 @@ func (l *LinkedList[T]) Delete(index int) {
 	}
 
 	prevNode.next = prevNode.next.next
+}
+
+func (l *LinkedList[T]) String() string {
+	var builder strings.Builder
+
+	// assume each element requires at least one byte for printing
+	// and one byte for spacing between elements
+	// len("LinkedList[]") + (LinkedList.len * 2)
+	builder.Grow(12 + (l.len * 2))
+
+	builder.WriteString("LinkedList[")
+
+	i := 0
+	for currentNode := l.head; currentNode != nil; currentNode = currentNode.next {
+		if i != 0 {
+			builder.WriteString(" ")
+		}
+		builder.WriteString(fmt.Sprint(currentNode.value))
+		i++
+	}
+
+	builder.WriteString("]")
+
+	return builder.String()
 }
