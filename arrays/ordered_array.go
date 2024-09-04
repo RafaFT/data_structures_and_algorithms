@@ -3,6 +3,7 @@ package arrays
 import (
 	"cmp"
 	"fmt"
+	"iter"
 
 	"dsa/bisect"
 )
@@ -75,4 +76,15 @@ func (a *OrderedArray[T]) Delete(value T) int {
 	a.arr = a.arr[:len(a.arr)-1]
 
 	return i
+}
+
+// All returns an iterator over OrderedArray index-value pairs.
+func (a *OrderedArray[T]) All() iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		for i, v := range a.arr {
+			if !yield(i, v) {
+				return
+			}
+		}
+	}
 }

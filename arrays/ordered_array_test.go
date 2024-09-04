@@ -2,6 +2,7 @@ package arrays
 
 import (
 	"fmt"
+	"iter"
 	"reflect"
 	"testing"
 )
@@ -198,6 +199,55 @@ func TestOrderedDelete(t *testing.T) {
 			t.Errorf("%d: %s.Delete(%d) = (%v, %d), want (%v, %d)",
 				i, arrayBefore, test.value, test.array.arr, gotIndex, test.wantArray.arr, test.want,
 			)
+		}
+	}
+}
+
+type collected[T1, T2 any] struct {
+	v1 T1
+	v2 T2
+}
+
+func collect[T1, T2 any](seq iter.Seq2[T1, T2]) []collected[T1, T2] {
+	var r []collected[T1, T2]
+
+	for v1, v2 := range seq {
+		r = append(r, collected[T1, T2]{v1, v2})
+	}
+
+	return r
+}
+
+func TestAll(t *testing.T) {
+	tests := []struct {
+		array OrderedArray[string]
+		want  []collected[int, string]
+	}{
+		{
+			OrderedArray[string]{},
+			nil,
+		},
+		{
+			OrderedArray[string]{
+				arr: []string{},
+			},
+			nil,
+		},
+		{
+			OrderedArray[string]{
+				arr: []string{"a", "b", "c"},
+			},
+			[]collected[int, string]{
+				{0, "a"},
+				{1, "b"},
+				{2, "c"},
+			},
+		},
+	}
+
+	for i, test := range tests {
+		if got := collect(test.array.All()); !reflect.DeepEqual(got, test.want) {
+			t.Errorf("%d: %s.All() = %v, want %v", i, test.array, got, test.want)
 		}
 	}
 }
