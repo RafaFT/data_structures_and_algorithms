@@ -56,6 +56,11 @@ func (s *ArraySet[T]) Remove(value T) bool {
 	return true
 }
 
+// Len returns ArraySet's length.
+func (a *ArraySet[T]) Len() int {
+	return len(a.arr)
+}
+
 // Values returns an iterator of ArraySet elements.
 func (s *ArraySet[T]) Values() iter.Seq[T] {
 	return func(yield func(T) bool) {

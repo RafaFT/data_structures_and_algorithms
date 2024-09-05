@@ -60,6 +60,11 @@ func (s *OrderedArraySet[T]) Remove(value T) bool {
 	return true
 }
 
+// Len returns OrderedArraySet's length.
+func (a *OrderedArraySet[T]) Len() int {
+	return len(a.arr)
+}
+
 // Values returns an iterator of OrderedArraySet elements.
 func (s *OrderedArraySet[T]) Values() iter.Seq[T] {
 	return func(yield func(T) bool) {

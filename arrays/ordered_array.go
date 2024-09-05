@@ -78,6 +78,11 @@ func (a *OrderedArray[T]) Delete(value T) int {
 	return i
 }
 
+// Len returns OrderedArray's length.
+func (a *OrderedArray[T]) Len() int {
+	return len(a.arr)
+}
+
 // All returns an iterator over OrderedArray index-value pairs.
 func (a *OrderedArray[T]) All() iter.Seq2[int, T] {
 	return func(yield func(int, T) bool) {

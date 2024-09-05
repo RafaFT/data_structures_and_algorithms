@@ -14,6 +14,8 @@ type Set[T comparable] interface {
 	Has(value T) bool
 	// Remove removes value from Set and reports whether it was found.
 	Remove(value T) bool
+	// Len returns Set's length.
+	Len() int
 	// Values returns an iterator over Set elements.
 	Values() iter.Seq[T]
 }

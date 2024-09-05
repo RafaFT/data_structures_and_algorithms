@@ -109,6 +109,11 @@ func (l *LinkedList[T]) Delete(index int) {
 	prevNode.next = prevNode.next.next
 }
 
+// Len returns LinkedList's length.
+func (l *LinkedList[T]) Len() int {
+	return l.len
+}
+
 func (l *LinkedList[T]) String() string {
 	var builder strings.Builder
 
