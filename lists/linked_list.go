@@ -2,6 +2,7 @@ package lists
 
 import (
 	"fmt"
+	"iter"
 	"strings"
 )
 
@@ -24,24 +25,23 @@ func (l *LinkedList[T]) Read(index int) T {
 		panic(fmt.Sprintf("index out of range [%d] with length %d", index, l.len))
 	}
 
-	currentNode := l.head
-	for i := 1; i <= index; i++ {
-		currentNode = currentNode.next
+	for i, v := range l.all() {
+		if i == index {
+			return v.value
+		}
 	}
 
-	return currentNode.value
+	panic("unreachable")
 }
 
 // Search returns the first index that contains value or -1.
 //
 // Time O(n) and space O(1).
 func (l *LinkedList[T]) Search(value T) int {
-	i := 0
-	for currentNode := l.head; currentNode != nil; currentNode = currentNode.next {
-		if currentNode.value == value {
+	for i, v := range l.all() {
+		if v.value == value {
 			return i
 		}
-		i++
 	}
 
 	return -1
@@ -68,9 +68,11 @@ func (l *LinkedList[T]) Insert(value T, index int) {
 		return
 	}
 
-	prevNode := l.head
-	for i := 1; i < index; i++ {
-		prevNode = prevNode.next
+	var prevNode *node[T]
+	for i, v := range l.all() {
+		if i == index-1 {
+			prevNode = v
+		}
 	}
 
 	newNode.next = prevNode.next
@@ -97,9 +99,11 @@ func (l *LinkedList[T]) Delete(index int) {
 		return
 	}
 
-	prevNode := l.head
-	for i := 1; i < index; i++ {
-		prevNode = prevNode.next
+	var prevNode *node[T]
+	for i, v := range l.all() {
+		if i == index-1 {
+			prevNode = v
+		}
 	}
 
 	prevNode.next = prevNode.next.next
@@ -127,4 +131,39 @@ func (l *LinkedList[T]) String() string {
 	builder.WriteString("]")
 
 	return builder.String()
+}
+
+// all returns an iterator over LinkedList's index-node pairs.
+func (l *LinkedList[T]) all() iter.Seq2[int, *node[T]] {
+	return func(yield func(int, *node[T]) bool) {
+		i := 0
+		for currentNode := l.head; currentNode != nil; currentNode = currentNode.next {
+			if !yield(i, currentNode) {
+				return
+			}
+			i++
+		}
+	}
+}
+
+// All returns an iterator over LinkedList's index-value pairs.
+func (l *LinkedList[T]) All() iter.Seq2[int, T] {
+	return func(yield func(int, T) bool) {
+		for i, v := range l.all() {
+			if !yield(i, v.value) {
+				return
+			}
+		}
+	}
+}
+
+// Values returns an iterator over LinkedList's elements.
+func (l *LinkedList[T]) Values() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, value := range l.All() {
+			if !yield(value) {
+				return
+			}
+		}
+	}
 }

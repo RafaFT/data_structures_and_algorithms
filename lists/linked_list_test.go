@@ -371,3 +371,56 @@ func TestDelete(t *testing.T) {
 		}
 	}
 }
+
+type collected[T1, T2 any] struct {
+	v1 T1
+	v2 T2
+}
+
+func collect[T1, T2 any](seq iter.Seq2[T1, T2]) []collected[T1, T2] {
+	var r []collected[T1, T2]
+
+	for v1, v2 := range seq {
+		r = append(r, collected[T1, T2]{v1, v2})
+	}
+
+	return r
+}
+
+func TestAll(t *testing.T) {
+	tests := []struct {
+		ll   *LinkedList[string]
+		want []collected[int, string]
+	}{
+		{
+			&LinkedList[string]{},
+			nil,
+		},
+		{
+			&LinkedList[string]{
+				len: 3,
+				head: &node[string]{
+					value: "a",
+					next: &node[string]{
+						value: "b",
+						next: &node[string]{
+							value: "c",
+							next:  nil,
+						},
+					},
+				},
+			},
+			[]collected[int, string]{
+				{0, "a"},
+				{1, "b"},
+				{2, "c"},
+			},
+		},
+	}
+
+	for i, test := range tests {
+		if got := collect(test.ll.All()); !reflect.DeepEqual(got, test.want) {
+			t.Errorf("%d: %v.All() = %v, got %v", i, test.ll, got, test.want)
+		}
+	}
+}
