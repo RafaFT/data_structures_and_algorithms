@@ -3,6 +3,7 @@ package sets
 import (
 	"fmt"
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -106,6 +107,40 @@ func TestArraySetRemove(t *testing.T) {
 		if gotBool := test.set.Remove(test.value); gotBool != test.wantBool || !reflect.DeepEqual(test.set, test.wantSet) {
 			t.Errorf("%d: %v.Remove(%q) = (%v, %v), want %v, %v",
 				i, setBefore, test.value, test.set.arr, gotBool, test.wantSet.arr, test.wantBool)
+		}
+	}
+}
+
+func TestArraySetValues(t *testing.T) {
+	tests := []struct {
+		array ArraySet[string]
+		want  []string
+	}{
+		{
+			ArraySet[string]{},
+			nil,
+		},
+		{
+			ArraySet[string]{
+				arr: []string{},
+			},
+			nil,
+		},
+		{
+			ArraySet[string]{
+				arr: []string{"c", "b", "a"},
+			},
+			[]string{
+				"c",
+				"b",
+				"a",
+			},
+		},
+	}
+
+	for i, test := range tests {
+		if got := slices.Collect(test.array.Values()); !reflect.DeepEqual(got, test.want) {
+			t.Errorf("%d: %s.Values() = %v, want %v", i, test.array, got, test.want)
 		}
 	}
 }

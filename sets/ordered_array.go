@@ -2,6 +2,7 @@ package sets
 
 import (
 	"cmp"
+	"iter"
 
 	"dsa/bisect"
 )
@@ -57,4 +58,15 @@ func (s *OrderedArraySet[T]) Remove(value T) bool {
 	s.arr = s.arr[:len(s.arr)-1]
 
 	return true
+}
+
+// Values returns an iterator of OrderedArraySet elements.
+func (s *OrderedArraySet[T]) Values() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, value := range s.arr {
+			if !yield(value) {
+				return
+			}
+		}
+	}
 }

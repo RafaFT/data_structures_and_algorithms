@@ -1,5 +1,7 @@
 package sets
 
+import "iter"
+
 var _ Set[int] = &ArraySet[int]{}
 
 // ArraySet is a naive [Set] implementation that uses an array underneath.
@@ -52,4 +54,15 @@ func (s *ArraySet[T]) Remove(value T) bool {
 	s.arr = s.arr[:len(s.arr)-1]
 
 	return true
+}
+
+// Values returns an iterator of ArraySet elements.
+func (s *ArraySet[T]) Values() iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, value := range s.arr {
+			if !yield(value) {
+				return
+			}
+		}
+	}
 }
