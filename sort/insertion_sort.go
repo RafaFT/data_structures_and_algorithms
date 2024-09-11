@@ -1,6 +1,10 @@
 package sort
 
-import "cmp"
+import (
+	"cmp"
+
+	"dsa/bisect"
+)
 
 // InsertionSort sorts s in-place by traversing the array
 // once and finding the correct insertion position backwards
@@ -21,5 +25,21 @@ func InsertionSort[T cmp.Ordered](s []T) {
 		}
 
 		s[j+1] = value
+	}
+}
+
+// Like [InsertionSort], but uses bisect algorithm for
+// finding insert position.
+// It might be more efficient for worst-cases.
+//
+// Time O(N²) and space O(1).
+func InsertionSortV2[T cmp.Ordered](s []T) {
+	for i := 1; i < len(s); i++ {
+		value := s[i]
+
+		if j := bisect.BisectRight(s[:i], value); j != i {
+			copy(s[j+1:i+1], s[j:i])
+			s[j] = value
+		}
 	}
 }
