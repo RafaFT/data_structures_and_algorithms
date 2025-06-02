@@ -68,11 +68,9 @@ func (l *LinkedList[T]) Insert(value T, index int) {
 		return
 	}
 
-	var prevNode *node[T]
-	for i, v := range l.all() {
-		if i == index-1 {
-			prevNode = v
-		}
+	prevNode := l.head
+	for i := 0; i < index-1; i++ {
+		prevNode = prevNode.next
 	}
 
 	newNode.next = prevNode.next
@@ -99,11 +97,9 @@ func (l *LinkedList[T]) Delete(index int) {
 		return
 	}
 
-	var prevNode *node[T]
-	for i, v := range l.all() {
-		if i == index-1 {
-			prevNode = v
-		}
+	prevNode := l.head
+	for i := 0; i < index-1; i++ {
+		prevNode = prevNode.next
 	}
 
 	prevNode.next = prevNode.next.next

@@ -32,11 +32,11 @@ func (a *OrderedArray[T]) Read(index int) T {
 func (a *OrderedArray[T]) Search(value T) int {
 	i := bisect.BisectLeft(a.arr, value)
 
-	if i == len(a.arr) || i == 0 && a.arr[i] != value {
-		return -1
+	// Check if i is within bounds and if the element at i is indeed the value we are searching for.
+	if i < len(a.arr) && a.arr[i] == value {
+		return i
 	}
-
-	return i
+	return -1
 }
 
 // Insert inserts value at correct index to preserve order.
@@ -44,18 +44,8 @@ func (a *OrderedArray[T]) Search(value T) int {
 // Time O(n) and space O(1).
 func (a *OrderedArray[T]) Insert(value T) {
 	i := bisect.BisectRight(a.arr, value)
-
-	a.arr = append(a.arr, value)
-
-	if i != -1 {
-		for ; i < len(a.arr)-1; i++ {
-			a.arr[i], a.arr[i+1] = a.arr[i+1], a.arr[i]
-		}
-	} else {
-		for i := len(a.arr) - 1; i > 0 && value < a.arr[i-1]; i-- {
-			a.arr[i], a.arr[i-1] = a.arr[i-1], a.arr[i]
-		}
-	}
+	// Create space at index i and insert the value
+	a.arr = append(a.arr[:i], append([]T{value}, a.arr[i:]...)...)
 }
 
 // Delete removes one occurrence of value and return it's index
@@ -63,18 +53,20 @@ func (a *OrderedArray[T]) Insert(value T) {
 //
 // Time O(n) and space O(1).
 func (a *OrderedArray[T]) Delete(value T) int {
-	i := bisect.BisectRight(a.arr, value) - 1
+	// Find the insertion point that would be to the right of any existing 'value's.
+	// So, index `j-1` is the potential location of the rightmost 'value'.
+	j := bisect.BisectRight(a.arr, value)
+	i := j - 1
 
-	if i == -1 || (a.arr[i] != value) {
-		return -1
+	// Check if 'i' is a valid index and if the element at 'i' is indeed the 'value'.
+	// - i < 0: 'value' is smaller than all elements, or array is empty.
+	// - a.arr[i] != value: The element at the found position is not 'value'.
+	if i < 0 || i >= len(a.arr) || a.arr[i] != value {
+		return -1 // Value not found
 	}
 
-	for j := i; j < len(a.arr)-1; j++ {
-		a.arr[j], a.arr[j+1] = a.arr[j+1], a.arr[j]
-	}
-
-	a.arr = a.arr[:len(a.arr)-1]
-
+	// Value found at index i (which is the rightmost occurrence)
+	a.arr = append(a.arr[:i], a.arr[i+1:]...)
 	return i
 }
 

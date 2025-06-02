@@ -55,7 +55,7 @@ func (a *Array[T]) Insert(value T, index int) {
 	arr = append(arr, value)
 
 	// swap values until new value is at correct index position
-	for newIndex := len(arr) - 1; newIndex != index; newIndex-- {
+	for newIndex := len(arr) - 1; newIndex > index; newIndex-- {
 		arr[newIndex], arr[newIndex-1] = arr[newIndex-1], arr[newIndex]
 	}
 
@@ -74,12 +74,7 @@ func (a *Array[T]) Delete(value T) int {
 		return -1
 	}
 
-	// swap values to the right until last index can be removed
-	for newIndex := index; newIndex < len(arr)-1; newIndex++ {
-		arr[newIndex], arr[newIndex+1] = arr[newIndex+1], arr[newIndex]
-	}
-
-	*a = arr[:len(arr)-1]
+	*a = append(arr[:index], arr[index+1:]...)
 
 	return index
 }

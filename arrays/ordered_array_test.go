@@ -103,6 +103,16 @@ func TestOrderedSearch(t *testing.T) {
 			"a",
 			0,
 		},
+		{
+			OrderedArray[string]{arr: []string{"b", "c", "d"}},
+			"a", // smaller than all
+			-1,
+		},
+		{
+			OrderedArray[string]{arr: []string{"a", "b", "c"}},
+			"a", // first element
+			0,
+		},
 	}
 
 	for i, test := range tests {
@@ -137,6 +147,26 @@ func TestOrderedInsert(t *testing.T) {
 			OrderedArray[string]{arr: []string{"a", "c"}},
 			"b",
 			OrderedArray[string]{arr: []string{"a", "b", "c"}},
+		},
+		{
+			OrderedArray[string]{arr: []string{"a", "b", "c"}},
+			"b", // insert duplicate in middle
+			OrderedArray[string]{arr: []string{"a", "b", "b", "c"}},
+		},
+		{
+			OrderedArray[string]{arr: []string{"a", "b", "c"}},
+			"a", // insert duplicate at beginning
+			OrderedArray[string]{arr: []string{"a", "a", "b", "c"}},
+		},
+		{
+			OrderedArray[string]{arr: []string{"a", "b", "c"}},
+			"c", // insert duplicate at end
+			OrderedArray[string]{arr: []string{"a", "b", "c", "c"}},
+		},
+		{
+			OrderedArray[string]{arr: []string{"a", "a", "c"}},
+			"a", // insert another duplicate 'a'
+			OrderedArray[string]{arr: []string{"a", "a", "a", "c"}},
 		},
 	}
 
@@ -185,7 +215,43 @@ func TestOrderedDelete(t *testing.T) {
 		{
 			OrderedArray[int]{arr: []int{1, 1, 2, 2}},
 			2,
-			OrderedArray[int]{arr: []int{1, 1, 2}},
+			OrderedArray[int]{arr: []int{1, 1, 2}}, // Deletes rightmost 2 (index 3)
+			3,
+		},
+		{
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			10, // delete from beginning
+			OrderedArray[int]{arr: []int{20, 30}},
+			0,
+		},
+		{
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			30, // delete from end
+			OrderedArray[int]{arr: []int{10, 20}},
+			2,
+		},
+		{
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			5, // non-existent (smaller)
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			-1,
+		},
+		{
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			35, // non-existent (larger)
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			-1,
+		},
+		{
+			OrderedArray[int]{arr: []int{10, 20, 20, 30}},
+			20, // delete from duplicates (rightmost 20, index 2)
+			OrderedArray[int]{arr: []int{10, 20, 30}},
+			2,
+		},
+		{
+			OrderedArray[int]{arr: []int{10, 20, 20, 20, 30}},
+			20, // delete from multiple duplicates (rightmost 20, index 3)
+			OrderedArray[int]{arr: []int{10, 20, 20, 30}},
 			3,
 		},
 	}

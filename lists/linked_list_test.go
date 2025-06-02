@@ -2,6 +2,8 @@ package lists
 
 import (
 	"fmt"
+	"iter"
+	"reflect"
 	"testing"
 )
 
@@ -288,6 +290,22 @@ func TestInsert(t *testing.T) {
 				},
 			},
 		},
+		{
+			// Insert at l.Len() for a single-element list
+			&LinkedList[string]{
+				1,
+				&node[string]{value: "a", next: nil},
+			},
+			"b",
+			1, // index = l.Len()
+			&LinkedList[string]{
+				2,
+				&node[string]{
+					value: "a",
+					next:  &node[string]{value: "b", next: nil},
+				},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -297,6 +315,86 @@ func TestInsert(t *testing.T) {
 		if !equals(test.ll, test.want) {
 			t.Errorf("%d: %v.Insert(%s, %d) = %s, got %s", i, before, test.value, test.index, test.want, test.ll)
 		}
+	}
+}
+
+func TestValues(t *testing.T) {
+	// Helper to collect values from the Values iterator
+	collectValues := func(seq iter.Seq[string]) []string {
+		var r []string
+		for v := range seq {
+			r = append(r, v)
+		}
+		return r
+	}
+
+	tests := []struct {
+		name string
+		ll   *LinkedList[string]
+		want []string
+	}{
+		{
+			"empty list",
+			&LinkedList[string]{},
+			nil,
+		},
+		{
+			"single element list",
+			&LinkedList[string]{head: &node[string]{value: "hello"}, len: 1},
+			[]string{"hello"},
+		},
+		{
+			"multiple elements list",
+			&LinkedList[string]{
+				head: &node[string]{value: "a", next: &node[string]{value: "b", next: &node[string]{value: "c"}}},
+				len:  3,
+			},
+			[]string{"a", "b", "c"},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got := collectValues(test.ll.Values())
+			if !reflect.DeepEqual(got, test.want) {
+				t.Errorf("Values() = %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
+func TestStringMethod(t *testing.T) {
+	tests := []struct {
+		name string
+		ll   *LinkedList[string]
+		want string
+	}{
+		{
+			"empty list",
+			&LinkedList[string]{},
+			"LinkedList[]",
+		},
+		{
+			"single element list",
+			&LinkedList[string]{head: &node[string]{value: "hello"}, len: 1},
+			"LinkedList[hello]",
+		},
+		{
+			"multiple elements list",
+			&LinkedList[string]{
+				head: &node[string]{value: "a", next: &node[string]{value: "b", next: &node[string]{value: "c"}}},
+				len:  3,
+			},
+			"LinkedList[a b c]",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := test.ll.String(); got != test.want {
+				t.Errorf("String() = %q, want %q", got, test.want)
+			}
+		})
 	}
 }
 

@@ -67,7 +67,7 @@ func BisectRight[T cmp.Ordered](s []T, v T) int {
 
 	for left <= right {
 		m := ((right - left) / 2) + left
-		if value := s[m]; v >= value {
+		if elementAtIndexM := s[m]; v >= elementAtIndexM {
 			left = m + 1
 		} else {
 			right = m - 1
